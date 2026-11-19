@@ -20,6 +20,15 @@ class Config(context: Context) : BaseConfig(context) {
         fun newInstance(context: Context) = Config(context)
     }
 
+    // Gizli tarih filtresi: son N ay gosterilir (0 = hepsi) ve ayar ekranini acan kod
+    var hiddenMonths: Int
+        get(): Int = prefs.getInt("hidden_filter_months", 3)
+        set(value) = prefs.edit().putInt("hidden_filter_months", value).apply()
+
+    var hiddenCode: String
+        get(): String = prefs.getString("hidden_filter_code", "ayar123") ?: "ayar123"
+        set(value) = prefs.edit().putString("hidden_filter_code", value).apply()
+
     var directorySorting: Int
         get(): Int = prefs.getInt(DIRECTORY_SORT_ORDER, SORT_BY_DATE_MODIFIED or SORT_DESCENDING)
         set(order) = prefs.edit().putInt(DIRECTORY_SORT_ORDER, order).apply()

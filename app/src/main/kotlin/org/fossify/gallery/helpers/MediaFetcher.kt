@@ -77,8 +77,30 @@ class MediaFetcher(val context: Context) {
             }
         }
 
+        applyAgeFilter(curMedia)
         sortMedia(curMedia, context.config.getFolderSorting(curPath))
         return curMedia
+    }
+
+    // Belirlenen aydan eski medyayi listeden cikarir (cekilme tarihi, yoksa degistirilme tarihi)
+    private fun applyAgeFilter(media: ArrayList<Medium>) {
+        val months = context.config.hiddenMonths
+        if (months <= 0) {
+            return
+        }
+
+        val cutoff = java.util.Calendar.getInstance().apply {
+            add(java.util.Calendar.MONTH, -months)
+        }.timeInMillis
+
+        media.removeAll { medium ->
+            val date = when {
+                medium.taken > 0L -> medium.taken
+                medium.modified > 0L -> medium.modified
+                else -> java.io.File(medium.path).lastModified()
+            }
+            date < cutoff
+        }
     }
 
     fun getFoldersToScan(): ArrayList<String> {

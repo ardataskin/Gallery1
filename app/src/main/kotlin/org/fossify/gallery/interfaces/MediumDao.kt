@@ -52,4 +52,7 @@ interface MediumDao {
 
     @Query("DELETE FROM media WHERE deleted_ts != 0")
     fun clearRecycleBin()
+
+    @Query("DELETE FROM media WHERE deleted_ts = 0")
+    fun clearNonDeleted()
 }

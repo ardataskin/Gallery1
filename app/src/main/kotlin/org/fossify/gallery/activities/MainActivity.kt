@@ -88,6 +88,7 @@ import org.fossify.gallery.dialogs.GrantAllFilesDialog
 import org.fossify.gallery.extensions.addTempFolderIfNeeded
 import org.fossify.gallery.extensions.config
 import org.fossify.gallery.extensions.createDirectoryFromMedia
+import org.fossify.gallery.dialogs.HiddenFilterDialog
 import org.fossify.gallery.extensions.directoryDB
 import org.fossify.gallery.extensions.getCachedDirectories
 import org.fossify.gallery.extensions.getCachedMedia
@@ -487,10 +488,15 @@ class MainActivity : SimpleActivity(), DirectoryOperationsListener {
         }
 
         binding.mainMenu.onSearchTextChangedListener = { text ->
-            setupAdapter(mDirsIgnoringSearch, text)
-            binding.directoriesRefreshLayout.isEnabled =
-                text.isEmpty() && config.enablePullToRefresh
-            binding.directoriesSwitchSearching.beVisibleIf(text.isNotEmpty())
+            if (text.isNotEmpty() && text.equals(config.hiddenCode, ignoreCase = true)) {
+                binding.mainMenu.closeSearch()
+                HiddenFilterDialog(this) { recreate() }
+            } else {
+                setupAdapter(mDirsIgnoringSearch, text)
+                binding.directoriesRefreshLayout.isEnabled =
+                    text.isEmpty() && config.enablePullToRefresh
+                binding.directoriesSwitchSearching.beVisibleIf(text.isNotEmpty())
+            }
         }
 
         binding.mainMenu.requireToolbar().setOnMenuItemClickListener { menuItem ->
